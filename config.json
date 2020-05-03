@@ -9,9 +9,6 @@
 			"value": "/usr/src/app"
 		}
 	],
-	"network": {
-		"type": "none"
-	},
 	"interface" : {
 		"types": ["docker.ipamdriver/1.0"],
 		"socket": "pyipam.sock"
