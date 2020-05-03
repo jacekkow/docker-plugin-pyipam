@@ -1,0 +1,19 @@
+{
+	"description": "pyIPAM - IPAM driver in Python",
+	"documentation": "https://github.com/jacekkow/docker-plugin-pyipam",
+	"workdir": "/usr/src/app",
+	"entrypoint": ["uwsgi", "--ini", "uwsgi.ini"],
+	"env": [
+		{
+			"name": "HOME",
+			"value": "/usr/src/app"
+		}
+	],
+	"network": {
+		"type": "none"
+	},
+	"interface" : {
+		"types": ["docker.ipamdriver/1.0"],
+		"socket": "pyipam.sock"
+	}
+}

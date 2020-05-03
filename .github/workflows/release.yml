@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+
+jobs:
+  deploy:
+    name: Publish to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: |
+          docker login -u 'jacekkow' -p '${{ secrets.DOCKER_PASSWORD }}'
+
+      - name: Prepare and push Docker plugin
+        run: |
+          VERSIONS="latest ${GITHUB_REF/refs\/tags\//}"
+          export VERSIONS
+          ./package.sh
+          for VERSION in ${VERSIONS}; do
+            docker plugin push "jacekkow/pyipam:${VERSION}"
+          done
