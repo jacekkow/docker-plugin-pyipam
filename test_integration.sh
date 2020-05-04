@@ -50,4 +50,16 @@ docker network create \
   --gateway 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff \
   test2
 
+ROUTES=$(docker run --rm --network test2 \
+  debian \
+  /bin/ip route show
+)
+echo "${ROUTES}" | grep 192.168.255.254
+
+ROUTES=$(docker run --rm --network test2 \
+  debian \
+  /bin/ip -6 route show
+)
+echo "${ROUTES}" | grep 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff
+
 docker network rm test2

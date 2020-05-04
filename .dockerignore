@@ -1,9 +1,11 @@
 __pycache__
+/.dockerignore
 /.git
+/.github
 /.gitignore
 /.idea
 /config.json
+/package.sh
 /rootfs
-/test
-/test.sh
+/test*
 /venv
