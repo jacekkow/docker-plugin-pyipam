@@ -18,7 +18,7 @@ docker plugin install jacekkow/pyipam
 Then you can use it in newly-created networks:
 
 ```bash
-docker network create --ipam-driver jacekkow/pyipam new-network
+docker network create --ipam-driver jacekkow/pyipam:latest new-network
 ```
 
 Check out [`test_integration.sh`](test_integration.sh) for more examples.
