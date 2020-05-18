@@ -1,2 +1,3 @@
 docker-plugin-api
 Flask
+waitress
