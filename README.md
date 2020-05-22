@@ -5,9 +5,12 @@ Simple IPAM plugin for Docker Engine that correctly handles IPv6 addresses
 
 It should be a drop-in replacement for "default" IPAM module.
 
+![Build status](https://github.com/jacekkow/docker-plugin-pyipam/workflows/Release/badge.svg)
+
 ## Installation
 
 Plugin is packaged as [Docker Engine-managed plugin](https://docs.docker.com/engine/extend/).
+Check out [plugin page on Docker Hub](https://hub.docker.com/p/jacekkow/pyipam).
 
 To install it simply run:
 
@@ -30,5 +33,3 @@ by following [Docker Engine documentation](https://docs.docker.com/engine/extend
 
 You can also use `package.sh` helper script which will perform
 all the steps (including installation) automatically.
-
-
