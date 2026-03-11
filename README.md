@@ -42,6 +42,15 @@ When set addresses with netmask /32 (IPv4) or /128 (IPv6) are handed out.
 In this mode all IP addresses are handed out from the subnet,
 including ones that would be "network address" and "broadcast address"!
 
+`validate=0`
+
+Do not validate duplicate IP address assignment. This IPAM plugin would
+then happily hand out already-used addresses if such were manually specified.
+This option does not affect automatic assignments.
+Note that this module does not track how many times the IP was handed out,
+hence if two containers have the same IP and one of them stops,
+IP will be marked as free!
+
 ## Manual packaging
 
 In order to test this module in development environment, you can build it
