@@ -41,6 +41,7 @@ class Pool:
         if not self.subpool.subnet_of(self.pool):
             raise InputValidationException('Subpool must be a subnet of pool')
 
+        self.validate = self.options.get('validate', '1') == '1'
         self.ptp = self.options.get('ptp', '0') == '1'
 
         self.allocations = set()
@@ -84,7 +85,7 @@ class Pool:
             raise InputValidationException('Requested address does not belong to a pool')
 
         address = str(address)
-        if self._is_allocated(address):
+        if self.validate and self._is_allocated(address):
             raise InputValidationException('Requested address {} is already used'.format(address))
         self.allocations.add(address)
 

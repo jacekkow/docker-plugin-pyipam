@@ -310,3 +310,19 @@ class TestPoolPointToPoint(unittest.TestCase):
         self.assertEqual(pool.allocate(), 'fe80::1/128')
         self.assertEqual(pool.allocate(), 'fe80::2/128')
         self.assertEqual(pool.allocate(), 'fe80::3/128')
+
+class TestPoolWithoutValidation(unittest.TestCase):
+    def test_pool_allocate_duplicates_ipv4(self):
+        pool = Pool(pool='127.0.0.0/30', options={'validate': '0'})
+        self.assertEqual(pool.allocate(), '127.0.0.1/30')
+        self.assertEqual(pool.allocate(), '127.0.0.2/30')
+        self.assertEqual(pool.allocate('127.0.0.1'), '127.0.0.1/30')
+        self.assertEqual(pool.allocate('127.0.0.1'), '127.0.0.1/30')
+
+    def test_pool_allocate_duplicates_ipv6(self):
+        pool = Pool(pool='fe80::/126', options={'validate': '0'})
+        self.assertEqual(pool.allocate(), 'fe80::1/126')
+        self.assertEqual(pool.allocate(), 'fe80::2/126')
+        self.assertEqual(pool.allocate(), 'fe80::3/126')
+        self.assertEqual(pool.allocate('fe80::1'), 'fe80::1/126')
+        self.assertEqual(pool.allocate('fe80::1'), 'fe80::1/126')
