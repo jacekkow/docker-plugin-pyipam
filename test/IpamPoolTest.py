@@ -294,3 +294,19 @@ class TestPoolAllocateRelease(unittest.TestCase):
         pool.deallocate('fe80::2')
         self.assertEqual(pool.allocate('fe80::2'), 'fe80::2/125')
         self.assertEqual(pool.allocate(), 'fe80::1/125')
+
+
+class TestPoolPointToPoint(unittest.TestCase):
+    def test_pool_allocate_ptp_ipv4(self):
+        pool = Pool(pool='127.0.0.0/30', options={'ptp': '1'})
+        self.assertEqual(pool.allocate(), '127.0.0.0/32')
+        self.assertEqual(pool.allocate(), '127.0.0.1/32')
+        self.assertEqual(pool.allocate(), '127.0.0.2/32')
+        self.assertEqual(pool.allocate(), '127.0.0.3/32')
+
+    def test_pool_allocate_ptp_ipv6(self):
+        pool = Pool(pool='fe80::/126', options={'ptp': '1'})
+        self.assertEqual(pool.allocate(), 'fe80::/128')
+        self.assertEqual(pool.allocate(), 'fe80::1/128')
+        self.assertEqual(pool.allocate(), 'fe80::2/128')
+        self.assertEqual(pool.allocate(), 'fe80::3/128')
