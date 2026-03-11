@@ -40,7 +40,6 @@ docker network rm test1
 
 
 docker network create \
-  --internal \
   --driver bridge \
   --ipam-driver "${PLUGIN}" \
   --ipv6 \
