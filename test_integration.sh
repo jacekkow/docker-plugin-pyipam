@@ -21,8 +21,8 @@ docker network create \
   test1
 
 ADDRESSES=$(docker run --rm --network test1 \
-  debian \
-  /bin/ip addr show
+  alpine \
+  /sbin/ip addr show
 )
 echo "${ADDRESSES}" | grep 192.168.255.129/24
 echo "${ADDRESSES}" | grep 2001:db8:aaaa:bbbb::1/32
@@ -30,8 +30,8 @@ echo "${ADDRESSES}" | grep 2001:db8:aaaa:bbbb::1/32
 
 ADDRESSES=$(docker run --rm --network test1 \
   --ip 192.168.255.25 --ip6 2001:db8:dddd:eeee:ffff:1:2:3 \
-  debian \
-  /bin/ip addr show
+  alpine \
+  /sbin/ip addr show
 )
 echo "${ADDRESSES}" | grep 192.168.255.25/24
 echo "${ADDRESSES}" | grep 2001:db8:dddd:eeee:ffff:1:2:3/32
@@ -51,14 +51,14 @@ docker network create \
   test2
 
 ROUTES=$(docker run --rm --network test2 \
-  debian \
-  /bin/ip route show
+  alpine \
+  /sbin/ip route show
 )
 echo "${ROUTES}" | grep 192.168.255.254
 
 ROUTES=$(docker run --rm --network test2 \
-  debian \
-  /bin/ip -6 route show
+  alpine \
+  /sbin/ip -6 route show
 )
 echo "${ROUTES}" | grep 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff
 
