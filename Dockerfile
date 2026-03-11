@@ -8,8 +8,8 @@ ENV HOME=/usr/src/app
 WORKDIR /usr/src/app
 
 COPY --chown=nobody:nobody requirements.txt .
-RUN pip3 install --user --no-cache-dir -r requirements.txt
+RUN python -m venv venv && ./venv/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=nobody:nobody . .
 
-CMD [ "./run.py" ]
+CMD [ "./venv/bin/python", "run.py" ]
