@@ -6,16 +6,19 @@ on:
     branches:
       - '**'
 
+permissions:
+  contents: read
+
 jobs:
   unit_test:
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
@@ -35,7 +38,7 @@ jobs:
       VERSIONS: dev
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Prepare Docker plugin
         run: |
