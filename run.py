@@ -2,6 +2,8 @@
 
 import logging
 import os
+import signal
+import sys
 
 import docker_plugin_api.Plugin
 import flask
@@ -20,4 +22,5 @@ if __name__ == '__main__':
 	if os.environ.get('ENVIRONMENT', 'dev') == 'dev':
 		app.run(debug=True)
 	else:
+		signal.signal(signal.SIGTERM, lambda: sys.exit(0))
 		waitress.serve(app, unix_socket='/run/docker/plugins/pyipam.sock', threads=1)
