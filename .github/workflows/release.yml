@@ -31,9 +31,6 @@ jobs:
           export NAME="ghcr.io/${{ github.repository }}"
           export VERSIONS="latest ${GITHUB_REF/refs\/tags\//}"
           ./package.sh
-          for VERSION in ${VERSIONS}; do
-            docker plugin push "ghcr.io/${{ github.repository }}:${VERSION}"
-          done
 
   deploy-to-docker-hub:
     name: Publish to Docker Hub
@@ -53,6 +50,3 @@ jobs:
           export NAME="${{ github.actor }}/pyipam"
           export VERSIONS="latest ${GITHUB_REF/refs\/tags\//}"
           ./package.sh
-          for VERSION in ${VERSIONS}; do
-            docker plugin push "${{ github.actor }}/pyipam:${VERSION}"
-          done

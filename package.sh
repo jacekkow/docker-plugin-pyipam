@@ -1,4 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
+
+set -e -x
 
 NAME=${NAME:-jacekkow/pyipam}
 VERSIONS=${VERSIONS:-latest}
@@ -12,14 +14,16 @@ id=$(docker create "${NAME}" true)
 sudo mkdir -p rootfs
 docker export "${id}" | sudo tar -x -C rootfs
 docker rm -vf "${id}"
-docker plugin disable "${NAME}"
-docker plugin rm "${NAME}"
+docker plugin disable "${NAME}" || true
+docker plugin rm "${NAME}" || true
 sudo chmod 755 rootfs && sudo chmod -R o=g rootfs/usr/src
-for VERSION in ${VERSIONS}; do
-  sudo docker plugin create "${NAME}:${VERSION}" .
-done
-sudo du -hs rootfs
-for VERSION in ${VERSIONS}; do
-  docker plugin enable "${NAME}:${VERSION}" || exit 1
-  break
-done
+if [ `echo ${VERSIONS} | wc -w` -gt 1 ]; then
+  for VERSION in ${VERSIONS}; do
+    sudo docker plugin create "${NAME}:${VERSION}" .
+    docker plugin push "${NAME}:${VERSION}"
+    docker plugin rm "${NAME}:${VERSION}"
+  done
+else
+  sudo docker plugin create "${NAME}:${VERSIONS}" .
+  docker plugin enable "${NAME}:${VERSIONS}"
+fi
