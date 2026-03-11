@@ -12,8 +12,7 @@ class Pool:
     def __init__(self, pool: str = None, options: dict = None, subPool: str = None, v6: bool = None):
         if pool == '':
             pool = None
-        if options is None:
-            options = {}
+        self.options = options or {}
         if subPool == '':
             subPool = None
 
@@ -42,8 +41,10 @@ class Pool:
         if not self.subpool.subnet_of(self.pool):
             raise InputValidationException('Subpool must be a subnet of pool')
 
+        self.ptp = self.options.get('ptp', '0') == '1'
+
         self.allocations = set()
-        self.current = self.subpool.hosts()
+        self.current = self.subpool.hosts() if not self.ptp else self.subpool.__iter__()
 
         self.v6 = isinstance(self.pool, ipaddress.IPv6Network)
 
@@ -62,7 +63,7 @@ class Pool:
         for address in self.current:
             if not self._is_allocated(address):
                 return address
-        self.current = self.subpool.hosts()
+        self.current = self.subpool.hosts() if not self.ptp else self.subpool.__iter__()
         for address in self.current:
             if not self._is_allocated(address):
                 return address
@@ -74,10 +75,11 @@ class Pool:
         else:
             address = ipaddress.ip_address(address)
 
-        if self.pool.network_address == address:
-            raise InputValidationException('Cannot allocate network address to a host')
-        if not self.v6 and self.pool.broadcast_address == address:
-            raise InputValidationException('Cannot allocate broadcast address to a host')
+        if not self.ptp:
+            if self.pool.network_address == address:
+                raise InputValidationException('Cannot allocate network address to a host')
+            if not self.v6 and self.pool.broadcast_address == address:
+                raise InputValidationException('Cannot allocate broadcast address to a host')
         if address not in self.pool:
             raise InputValidationException('Requested address does not belong to a pool')
 
@@ -86,7 +88,10 @@ class Pool:
             raise InputValidationException('Requested address {} is already used'.format(address))
         self.allocations.add(address)
 
-        return '{}/{}'.format(address, self.pool.prefixlen)
+        prefixlen = self.pool.prefixlen
+        if self.ptp:
+            prefixlen = 128 if self.v6 else 32
+        return '{}/{}'.format(address, prefixlen)
 
     def deallocate(self, address: str):
         address = ipaddress.ip_address(address)
