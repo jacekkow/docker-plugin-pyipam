@@ -9,6 +9,32 @@ permissions:
   contents: read
 
 jobs:
+  deploy-to-ghcr-io:
+    name: Publish to GitHub Container Registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare and push Docker plugin
+        run: |
+          export NAME="ghcr.io/${{ github.repository }}"
+          export VERSIONS="latest ${GITHUB_REF/refs\/tags\//}"
+          ./package.sh
+          for VERSION in ${VERSIONS}; do
+            docker plugin push "ghcr.io/${{ github.repository }}:${VERSION}"
+          done
+
   deploy-to-docker-hub:
     name: Publish to Docker Hub
     runs-on: ubuntu-latest
