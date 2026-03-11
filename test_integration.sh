@@ -1,11 +1,14 @@
 #!/bin/bash
 
-set -e
+set -e -x
 
 NAME=${NAME:-jacekkow/pyipam}
 VERSION=${VERSION:-latest}
 
 PLUGIN="${NAME}:${VERSION}"
+
+docker network rm test1 || true
+docker network rm test2 || true
 
 docker network create \
   --internal \
@@ -24,8 +27,14 @@ ADDRESSES=$(docker run --rm --network test1 \
   alpine \
   /sbin/ip addr show
 )
-echo "${ADDRESSES}" | grep 192.168.255.129/24
-echo "${ADDRESSES}" | grep 2001:db8:aaaa:bbbb::1/32
+if ! echo "${ADDRESSES}" | grep 192.168.255.129/24; then
+	echo "ERROR: invalid IPv4 address assigned"
+	exit 1
+fi
+if ! echo "${ADDRESSES}" | grep 2001:db8:aaaa:bbbb::1/32; then
+	echo "ERROR: invalid IPv6 address assigned"
+	exit 1
+fi
 
 
 ADDRESSES=$(docker run --rm --network test1 \
@@ -33,8 +42,14 @@ ADDRESSES=$(docker run --rm --network test1 \
   alpine \
   /sbin/ip addr show
 )
-echo "${ADDRESSES}" | grep 192.168.255.25/24
-echo "${ADDRESSES}" | grep 2001:db8:dddd:eeee:ffff:1:2:3/32
+if ! echo "${ADDRESSES}" | grep 192.168.255.25/24; then
+	echo "ERROR: invalid IPv4 address assigned"
+	exit 1
+fi
+if ! echo "${ADDRESSES}" | grep 2001:db8:dddd:eeee:ffff:1:2:3/32; then
+	echo "ERROR: invalid IPv6 address assigned"
+	exit 1
+fi
 
 docker network rm test1
 
@@ -53,12 +68,18 @@ ROUTES=$(docker run --rm --network test2 \
   alpine \
   /sbin/ip route show
 )
-echo "${ROUTES}" | grep 192.168.255.254
+if ! echo "${ROUTES}" | grep 192.168.255.254; then
+	echo "ERROR: invalid IPv4 route"
+	exit 1
+fi
 
 ROUTES=$(docker run --rm --network test2 \
   alpine \
   /sbin/ip -6 route show
 )
-echo "${ROUTES}" | grep 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff
+if ! echo "${ROUTES}" | grep 2001:db8:ffff:ffff:ffff:ffff:ffff:ffff; then
+	echo "ERROR: invalid IPv6 route"
+	exit 1
+fi
 
 docker network rm test2
